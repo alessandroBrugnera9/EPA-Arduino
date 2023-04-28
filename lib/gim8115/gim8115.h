@@ -1,23 +1,10 @@
-/*-------------------------------------------------------------------------------
-Created on Sat Feb 27 2021
-
-@Author: Jihwan Lee
-@GIT ID: DGIRobo
-@E-mail: fist5678@dgist.ac.kr
-@Department: Daegu Gyeongbuk Institute of Science and Technology(DGIST) Undergraduate Course
--------------------------------------------------------------------------------*/
 #include <mcp_can.h>
 #include <SPI.h>
 
-#ifdef ARDUINO_SMD_VARIANT_COMPLANCE
-  #define SERIAL SerialUSB
-#else
-  #define SERIAL Serial
-#endif
 
 #define pi = 3.14
 
-class gim8008V3
+class gim8115
 {
   private:
     unsigned char id;
@@ -38,8 +25,8 @@ class gim8008V3
     unsigned char kd_16h_hex;
     unsigned char kd_16l_hex;
     //----------------------------------------//
-    float pos_max = 6.28;
-    float pos_min = -6.28;
+    float pos_max = 6.28*20;
+    float pos_min = -6.28*20;
     //----------------------------------------//
     float vel_max = 45;
     float vel_min = -45;
@@ -48,7 +35,7 @@ class gim8008V3
     float tor_min = -18;
     
   public:
-    gim8008V3(int _id, float _kp, float _kd){
+    gim8115(int _id, float _kp, float _kd){
       id = (unsigned char) _id;
       //----------------------------------------//
       if (_kp>kp_max)
@@ -78,13 +65,12 @@ class gim8008V3
       kd_16l = kd_b % 16;
       kd_16h_hex = kd_16h;
       kd_16l_hex = kd_16l;
+
     }
 
     int setMotormode(MCP_CAN& CAN);
     int exitMotormode(MCP_CAN& CAN);
     int setZero(MCP_CAN& CAN);
     float normalSet(MCP_CAN& CAN, float tarPos, float tarVel, float tarTor);
-    float setPos(MCP_CAN& CAN, float tarPos);
-    float setVel(MCP_CAN& CAN, float tarVel);
-    float setTor(MCP_CAN& CAN, float tarTor);
+
 };
