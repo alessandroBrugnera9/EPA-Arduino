@@ -1,92 +1,113 @@
-#include <mcp_can.h>
-
 #include <SPI.h>
 
-//Serial Peripherial Interface (SPI) Library
+// libraries to handle motor through MCP
+#include <mcp_can.h>
+#include <MotorHandler.h>
 
-#include <gim8115.h> //Include object
+// setting can bus handler though SPI pins
+const byte spiCSPin = 9;
+MCP_CAN canHandler(spiCSPin);
 
-#define CAN_INT 2 //CAN BUS interrupt pin (NOT USED)
+// motor object instantiation
+MotorHandler motor(canHandler, 0x01, 50, 0.5);
 
-#define spiCSPin 10 //The MCP2515 CAN Bus is connected to pin 10
-
-float frequence = 0.01;
-
-float amplitude = 3.14;
-
-volatile float pos = 0;
-
-float angular_velocity = 1;
-
-float pos_pertubration = 0;
-
-float time_2 = 1 ;
-
-
-int pin_interrupt = 2; //Pin 2 is the interrupt
-
-volatile int state = LOW; // Giving the 
-
-//CAN BUS initialization  
-
-MCP_CAN CAN(spiCSPin);  //Setting the CS Pin number
-
-//Motor initialization
-gim8115 motor(0x01, 50, 0.5);
-
-
-void setup() {
-  Serial.begin(9600); //Begin Serial port
-
-  while(CAN_OK != CAN.begin(MCP_ANY, CAN_1000KBPS, MCP_8MHZ))  //Begin the CAN Bus and set frequency to 8 MHz and baudrate of 1000kb/s  and the masks and filters disabled.
+void initializeCanBus()
+{
+  while (CAN_OK != canHandler.begin(MCP_ANY, CAN_1000KBPS, MCP_8MHZ))
   {
-    Serial.println("CAN Bus initialization failed"); 
+    Serial.println("CAN Bus initialization failed");
     Serial.println("Initializing CAN Bus again");
     delay(100);
-    }
-    CAN.setMode(MCP_NORMAL);  // Change to normal mode to allow messages to be transmitted and received
-   Serial.println("CAN Bus init OK");
-   motor.exitMotormode(CAN);
-   motor.setMotormode(CAN);
-   motor.setZero(CAN);
-
-
-  //pinMode(CAN_INT, INPUT);  //Configuring the interrupt pin from the MCP(NOT USED)
+  }
+  Serial.println("CAN Bus init OK");
 }
 
+// ------------------------------------------------------------------------------------
+// Related to receiveing commands from Serial
+// Define command constants
+const char POSITION_CMD = 'p';
+const char TORQUE_MODE_CMD = 't';
+const char ZERO_CMD = 'z';
+const char TEST_CMD = 'a';
+const char SET_MOTOR_CMD = 'm';
 
-void loop() {
-//float pos = 1;
-if (Serial.available())
-  { // Enquanto a Serial receber dados
-    delay(10);
-    String comando = "";
+// Define delimiter constant
+const char DELIMITER = '/';
 
-    while (Serial.available())
-    {                                 // Enquanto receber comandos
-      comando += (char)Serial.read(); // Lê os caractéres
-    }
-    if (comando == "a")
-    {
-      motor.normalSet(CAN, 2, 2, 2); // Put in order: CANObject, desirePosition(rad), maxVelocity(rad/s), maxTorque(rad/s^2)
-      // Serial.println(actPos0);
-    }
-    if (comando == "s")
-    {
-      motor.normalSet(CAN, 10, 2, 2); // Put in order: CANObject, desirePosition(rad), maxVelocity(rad/s), maxTorque(rad/s^2)
-      // Serial.println(actPos0);
-    }
-    if (comando == "f")
-    {
-      motor.normalSet(CAN, 1000, 2, 2); // Put in order: CANObject, desirePosition(rad), maxVelocity(rad/s), maxTorque(rad/s^2)
-      // Serial.println(actPos0);
-    }
-    if (comando == "d")
-    {
-      Serial.println("oi");
-    }
+String getStringInSerialBuffer()
+{
+  delay(10);
+  String bufferString = "";
+  // listen to Serial port until it is empty
+  while (Serial.available())
+  {
+    bufferString += (char)Serial.read();
   }
-  motor.
-// motor.normalSet(CAN, pos, 0, 0); //Put in order: CANObject, desirePosition(rad), maxVelocity(rad/s), maxTorque(rad/s^2)
 
+  return bufferString;
+
+  // if (Serial.available() > 0) { // Check if there's serial data available
+  // String inputString = Serial.readStringUntil('\n'); // Read the incoming data
+  // inputString.trim(); // Remove any leading/trailing whitespace
+}
+
+void handleCommand(String inputString)
+{
+  char command = inputString.charAt(0);
+  switch (command)
+  {
+  case POSITION_CMD:
+    int delimiter = inputString.indexOf(DELIMITER);
+    float pos = inputString.substring(delimiter + 1).toFloat(); // Get position parameter
+    motor.moveMotor(pos);
+    break;
+  case TORQUE_MODE_CMD:
+    motor.setTorqueMode();
+    break;
+  case ZERO_CMD:
+    motor.resetPosition();
+    break;
+  case TEST_CMD:
+    Serial.println("Test command received");
+    break;
+  case SET_MOTOR_CMD:
+    int delimiter1 = inputString.indexOf(DELIMITER);
+    int delimiter2 = inputString.indexOf(DELIMITER, delimiter1 + 1);
+    int delimiter3 = inputString.indexOf(DELIMITER, delimiter2 + 1);
+    float position = inputString.substring(delimiter1 + 1, delimiter2).toFloat();
+    float velocity = inputString.substring(delimiter2 + 1, delimiter3).toFloat();
+    float torque = inputString.substring(delimiter3 + 1).toFloat();
+    // Call motor handler method to set motor parameters
+    motor.setPositionFull(position, velocity, torque);
+    break;
+  default:
+    Serial.println("Invalid command!"); // Print error message
+    break;
+  }
+}
+// ------------------------------------------------------------------------------------
+
+void setup()
+{
+  Serial.begin(9600); // Begin Serial port to talk to computer and receive commands
+
+  // Begin the CAN Bus and set frequency to 8 MHz and baudrate of 1000kb/s  and the masks and filters disabled.
+  initializeCanBus();
+  canHandler.setMode(MCP_NORMAL); // Change to normal mode to allow messages to be transmitted and received
+
+  // Preparing motor to listen to commands
+  motor.exitMotormode(canHandler);
+  motor.setMotormode(canHandler);
+  motor.setZero(canHandler);
+}
+
+void loop()
+{
+  // check if there is a command in the Serial buffer
+  if (Serial.available())
+  {
+    String inputString = getStringInSerialBuffer();
+    handleCommand(inputString);
+  }
+  delay(100);
 }
