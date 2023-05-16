@@ -74,7 +74,7 @@ int gim8115::setZero(MCP_CAN &CAN)
   return 1;
 }
 
-void gim8115::getMotorResponse(MCP_CAN &CAN)
+void gim8115::handleMotorResponse(MCP_CAN &CAN)
 {
   // Receiving data//
   unsigned char len = 0;
@@ -141,6 +141,8 @@ float gim8115::normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor)
   {
     // Serial.println("Error Sending Message!");
   }
+
+  handleMotorResponse(CAN);
 
   return 1;
 }
