@@ -70,40 +70,10 @@ int gim8115::setZero(MCP_CAN &CAN)
   return 1;
 }
 
-float gim8115::normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor)
+void gim8115::getMotorResponse(MCP_CAN &CAN)
 {
-  // Call the private functions to build the individual packages
-  float *posPackage = buildPositionPackage(tarPos);
-  float *velPackage = buildVelocityPackage(tarVel);
-  float *torPackage = buildTorquePackage(tarTor);
-
-  
-  //----------------------------------------------------------------------------//
-  // Sending data//
-  unsigned char len = 0;
-  unsigned char buf[8];
-  buf[0] = posPackage[0];
-  buf[1] = posPackage[1];
-  buf[2] = velPackage[0];
-  buf[3] = velPackage[1] * 16 + kp_16h_hex;
-  buf[4] = kp_16l_hex;
-  buf[5] = kd_16h_hex;
-  buf[6] = kd_16l_hex * 16 + torPackage[0];
-  buf[7] = torPackage[1];
-
-  byte sndStat = CAN.sendMsgBuf(id, 0, 8, buf);
-
-  if (sndStat == CAN_OK)
-  {
-    // Serial.println("Message Sent Successfully!");
-  }
-  else
-  {
-    // Serial.println("Error Sending Message!");
-  }
-
-  //----------------------------------------------------------------------------//
   // Receiving data//
+  unsigned char len = 0;
   long unsigned int rxId;
   char msgString2[128]; // Array to store serial string
   byte buf_received[6];
@@ -136,9 +106,41 @@ float gim8115::normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor)
   Serial.println(msgString2);
   // Serial.println("desired_Position: ");
   // Serial.write((unsigned int) pos_f);
+}
+
+float gim8115::normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor)
+{
+  // Call the private functions to build the individual packages
+  float *posPackage = buildPositionPackage(tarPos);
+  float *velPackage = buildVelocityPackage(tarVel);
+  float *torPackage = buildTorquePackage(tarTor);
+
+  //----------------------------------------------------------------------------//
+  // Sending data//
+  unsigned char buf[8];
+  buf[0] = posPackage[0];
+  buf[1] = posPackage[1];
+  buf[2] = velPackage[0];
+  buf[3] = velPackage[1] * 16 + kp_16h_hex;
+  buf[4] = kp_16l_hex;
+  buf[5] = kd_16h_hex;
+  buf[6] = kd_16l_hex * 16 + torPackage[0];
+  buf[7] = torPackage[1];
+
+  byte sndStat = CAN.sendMsgBuf(id, 0, 8, buf);
+
+  if (sndStat == CAN_OK)
+  {
+    // Serial.println("Message Sent Successfully!");
+  }
+  else
+  {
+    // Serial.println("Error Sending Message!");
+  }
 
   return 1;
 }
+
 
 float *gim8115::buildPositionPackage(float tarPos)
 {

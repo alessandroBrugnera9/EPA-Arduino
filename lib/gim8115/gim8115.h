@@ -97,6 +97,7 @@ public:
   int setMotormode(MCP_CAN &CAN);
   int exitMotormode(MCP_CAN &CAN);
   int setZero(MCP_CAN &CAN);
+  void getMotorResponse(MCP_CAN &CAN);
 
   /**
    * @brief Sets the normal mode for the GIM8115 device.
