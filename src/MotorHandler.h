@@ -6,12 +6,12 @@
 class MotorHandler : public gim8115
 {
 private:
-  MCP_CAN& canHandler;
+  MCP_CAN &canHandler;
   float baseVelocity;
   float baseTorque;
 
 public:
-  MotorHandler(MCP_CAN& CAN, int canId, float _kp, float _kd);           // Constructor - sets the motor number
+  MotorHandler(MCP_CAN &CAN, int canId, float _kp, float _kd);      // Constructor - sets the motor number
   void moveMotor(float newPos);                                     // Move the motor to the specified position using base velocity and torque
   void setTorqueMode();                                             // Set the motor to torque mode
   void resetPosition();                                             // Reset the motor position to zero

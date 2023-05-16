@@ -45,10 +45,6 @@ String getStringInSerialBuffer()
   }
 
   return bufferString;
-
-  // if (Serial.available() > 0) { // Check if there's serial data available
-  // String inputString = Serial.readStringUntil('\n'); // Read the incoming data
-  // inputString.trim(); // Remove any leading/trailing whitespace
 }
 
 void handleCommand(String inputString)
@@ -59,27 +55,30 @@ void handleCommand(String inputString)
   case POSITION_CMD:
   {
     int delimiter = inputString.indexOf(DELIMITER);
-    
+
     // check if command is correct
     if (delimiter > 0)
     {
       float pos = inputString.substring(delimiter + 1).toFloat(); // Get position parameter
       Serial.print("Position in rad: ");
       Serial.println(pos);
-    // motor.moveMotor(pos);
-    } else {
+      motor.moveMotor(pos);
+    }
+    else
+    {
       Serial.println("Wrong position command. Try p/*ANGLE*.");
     }
   }
   break;
   case TORQUE_MODE_CMD:
   {
-    // motor.setTorqueMode();
+    motor.normalSet(canHandler, 2, 2, 2); // Put in order: CANObject, desirePosition(rad), maxVelocity(rad/s), maxTorque(rad/s^2)
+    motor.setTorqueMode();
   }
   break;
   case ZERO_CMD:
   {
-    // motor.resetPosition();
+    motor.resetPosition();
   }
   break;
   case TEST_CMD:
@@ -92,7 +91,7 @@ void handleCommand(String inputString)
     int delimiter1 = inputString.indexOf(DELIMITER);
     int delimiter2 = inputString.indexOf(DELIMITER, delimiter1 + 1);
     int delimiter3 = inputString.indexOf(DELIMITER, delimiter2 + 1);
-    
+
     // check if command is correct
     if (delimiter1 > 0 && delimiter2 > 0 && delimiter3 > 0)
     {
@@ -108,8 +107,10 @@ void handleCommand(String inputString)
       Serial.println(torque);
 
       // Call motor handler method to set motor parameters
-      // motor.setPositionFull(position, velocity, torque);
-    } else {
+      motor.setPositionFull(position, velocity, torque);
+    }
+    else
+    {
       Serial.println("Wrong motor command. Try m/*ANGLE*/*VELOCITY*/*TORQUE*.");
     }
   }
@@ -129,12 +130,12 @@ void setup()
 
   // Begin the CAN Bus and set frequency to 8 MHz and baudrate of 1000kb/s  and the masks and filters disabled.
   initializeCanBus();
-  // canHandler.setMode(MCP_NORMAL); // Change to normal mode to allow messages to be transmitted and received
+  canHandler.setMode(MCP_NORMAL); // Change to normal mode to allow messages to be transmitted and received
 
-  // // Preparing motor to listen to commands
-  // motor.exitMotormode(canHandler);
-  // motor.setMotormode(canHandler);
-  // motor.setZero(canHandler);
+  // Preparing motor to listen to commands
+  motor.exitMotormode(canHandler);
+  motor.setMotormode(canHandler);
+  motor.setZero(canHandler);
 }
 
 void loop()
