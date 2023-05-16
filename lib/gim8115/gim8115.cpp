@@ -82,10 +82,8 @@ float gim8115::normalSet(MCP_CAN& CAN, float tarPos, float tarVel, float tarTor)
   }
   tarPos = tarPos + 95.5;
   pos_b = 65535 * tarPos / 191;
-  float pos_16h = pos_b / 256;
-  float pos_16l = pos_b % 256;
-  unsigned char pos_16h_hex = pos_16h;
-  unsigned char pos_16l_hex = pos_16l;
+  unsigned char pos_16h = pos_b / 256;
+  unsigned char pos_16l = pos_b % 256;
 
   //----------------------------------------------------------------------------//
   //Velocity//
@@ -100,10 +98,8 @@ float gim8115::normalSet(MCP_CAN& CAN, float tarPos, float tarVel, float tarTor)
   }
   tarVel = tarVel + 45;
   vel_b = 4095 * tarVel / 90;
-  float vel_16h = vel_b / 16;
-  float vel_16l = vel_b % 16;
-  unsigned char vel_16h_hex = vel_16h;
-  unsigned char vel_16l_hex = vel_16l;
+  unsigned char vel_16h = vel_b / 16;
+  unsigned char vel_16l = vel_b % 16;
   //----------------------------------------------------------------------------//
   //Torque//
   unsigned int tor_b;
@@ -117,10 +113,8 @@ float gim8115::normalSet(MCP_CAN& CAN, float tarPos, float tarVel, float tarTor)
   }
   tarTor = tarTor + 18;
   tor_b = 4095 * tarTor / 36;
-  float tor_16h = tor_b / 256;
-  float tor_16l = tor_b % 256;
-  unsigned char tor_16h_hex = tor_16h;
-  unsigned char tor_16l_hex = tor_16l;
+  unsigned char tor_16h = tor_b / 256;
+  unsigned char tor_16l = tor_b % 256;
   //----------------------------------------------------------------------------//
   //Sending data//
   unsigned char len = 0;
@@ -131,8 +125,8 @@ float gim8115::normalSet(MCP_CAN& CAN, float tarPos, float tarVel, float tarTor)
   buf[3] = vel_16l*16 + kp_16h_hex;
   buf[4] = kp_16l_hex;
   buf[5] = kd_16h_hex;
-  buf[6] = kd_16l_hex*16 + tor_16h_hex;
-  buf[7] = tor_16l_hex;
+  buf[6] = kd_16l_hex*16 + tor_16h;
+  buf[7] = tor_16l;
 
   byte sndStat =  CAN.sendMsgBuf(id, 0, 8, buf);
 
