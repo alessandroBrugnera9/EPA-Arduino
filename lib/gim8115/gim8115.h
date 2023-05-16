@@ -33,6 +33,7 @@ private:
   float tor_max = 18;
   float tor_min = -18;
 
+protected:
   /**
    * @brief Builds the position package for the GIM8115 device.
    *
