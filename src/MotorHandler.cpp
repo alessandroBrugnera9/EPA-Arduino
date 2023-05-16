@@ -12,11 +12,34 @@ void MotorHandler::moveMotor(float newPos)
   normalSet(canHandler, newPos, baseVelocity, baseTorque);
 }
 
-void MotorHandler::setTorqueMode()
+void MotorHandler::setTorqueMode(float tarTor)
 {
-  // Code to set motor to torque mode goes here
-  // TODO: create torque mode function
-  Serial.println("Motor set to torque mode");
+  // Call the private functions to build the individual packages
+  float *torPackage = buildTorquePackage(tarTor);
+
+  //----------------------------------------------------------------------------//
+  // Sending data//
+  unsigned char buf[8];
+  buf[0] = 0;
+  buf[1] = 0;
+  buf[2] = 0;
+  buf[3] = 0;
+  buf[4] = 0;
+  buf[5] = 0;
+  buf[6] = torPackage[0];
+  buf[7] = torPackage[1];
+
+  byte sndStat = canHandler.sendMsgBuf(getId(), 0, 8, buf);
+
+  if (sndStat == CAN_OK)
+  {
+    // Serial.println("Message Sent Successfully!");
+  }
+  else
+  {
+    // Serial.println("Error Sending Message!");
+  }
+
 }
 
 void MotorHandler::resetPosition()
