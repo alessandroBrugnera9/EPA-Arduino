@@ -1,6 +1,10 @@
 #include "gim8115.h"
 #include <SPI.h> //Serial Peripherial Interface (SPI) Library
 
+unsigned char gim8115::getId() const {
+  return id;
+}
+
 int gim8115::setMotormode(MCP_CAN &CAN)
 {
   unsigned char len = 0;

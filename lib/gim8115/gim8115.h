@@ -95,6 +95,13 @@ public:
     kd_16l_hex = kd_16l;
   }
 
+  /**
+   * @brief Get the ID of the motor in the CAN bus.
+   * 
+   * @return The ID value as an unsigned char.
+   */
+  unsigned char getId() const;
+  
   int setMotormode(MCP_CAN &CAN);
   int exitMotormode(MCP_CAN &CAN);
   int setZero(MCP_CAN &CAN);
