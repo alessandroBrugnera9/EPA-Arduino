@@ -57,32 +57,68 @@ void handleCommand(String inputString)
   switch (command)
   {
   case POSITION_CMD:
+  {
     int delimiter = inputString.indexOf(DELIMITER);
-    float pos = inputString.substring(delimiter + 1).toFloat(); // Get position parameter
-    motor.moveMotor(pos);
-    break;
+    
+    // check if command is correct
+    if (delimiter > 0)
+    {
+      float pos = inputString.substring(delimiter + 1).toFloat(); // Get position parameter
+      Serial.print("Position in rad: ");
+      Serial.println(pos);
+    // motor.moveMotor(pos);
+    } else {
+      Serial.println("Wrong position command. Try p/*ANGLE*.");
+    }
+  }
+  break;
   case TORQUE_MODE_CMD:
-    motor.setTorqueMode();
-    break;
+  {
+    // motor.setTorqueMode();
+  }
+  break;
   case ZERO_CMD:
-    motor.resetPosition();
-    break;
+  {
+    // motor.resetPosition();
+  }
+  break;
   case TEST_CMD:
+  {
     Serial.println("Test command received");
-    break;
+  }
+  break;
   case SET_MOTOR_CMD:
+  {
     int delimiter1 = inputString.indexOf(DELIMITER);
     int delimiter2 = inputString.indexOf(DELIMITER, delimiter1 + 1);
     int delimiter3 = inputString.indexOf(DELIMITER, delimiter2 + 1);
-    float position = inputString.substring(delimiter1 + 1, delimiter2).toFloat();
-    float velocity = inputString.substring(delimiter2 + 1, delimiter3).toFloat();
-    float torque = inputString.substring(delimiter3 + 1).toFloat();
-    // Call motor handler method to set motor parameters
-    motor.setPositionFull(position, velocity, torque);
-    break;
+    
+    // check if command is correct
+    if (delimiter1 > 0 && delimiter2 > 0 && delimiter3 > 0)
+    {
+      float position = inputString.substring(delimiter1 + 1, delimiter2).toFloat();
+      float velocity = inputString.substring(delimiter2 + 1, delimiter3).toFloat();
+      float torque = inputString.substring(delimiter3 + 1).toFloat();
+
+      Serial.print("Position in rad: ");
+      Serial.println(position);
+      Serial.print("velocity in rad/s: ");
+      Serial.println(velocity);
+      Serial.print("Torque in Nm: ");
+      Serial.println(torque);
+
+      // Call motor handler method to set motor parameters
+      // motor.setPositionFull(position, velocity, torque);
+    } else {
+      Serial.println("Wrong motor command. Try m/*ANGLE*/*VELOCITY*/*TORQUE*.");
+    }
+  }
+  break;
   default:
+  {
     Serial.println("Invalid command!"); // Print error message
-    break;
+  }
+  break;
   }
 }
 // ------------------------------------------------------------------------------------
@@ -93,12 +129,12 @@ void setup()
 
   // Begin the CAN Bus and set frequency to 8 MHz and baudrate of 1000kb/s  and the masks and filters disabled.
   initializeCanBus();
-  canHandler.setMode(MCP_NORMAL); // Change to normal mode to allow messages to be transmitted and received
+  // canHandler.setMode(MCP_NORMAL); // Change to normal mode to allow messages to be transmitted and received
 
-  // Preparing motor to listen to commands
-  motor.exitMotormode(canHandler);
-  motor.setMotormode(canHandler);
-  motor.setZero(canHandler);
+  // // Preparing motor to listen to commands
+  // motor.exitMotormode(canHandler);
+  // motor.setMotormode(canHandler);
+  // motor.setZero(canHandler);
 }
 
 void loop()
