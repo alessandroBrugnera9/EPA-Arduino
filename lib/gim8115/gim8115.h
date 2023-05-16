@@ -97,15 +97,15 @@ public:
 
   /**
    * @brief Get the ID of the motor in the CAN bus.
-   * 
+   *
    * @return The ID value as an unsigned char.
    */
   unsigned char getId() const;
-  
+
   int setMotormode(MCP_CAN &CAN);
   int exitMotormode(MCP_CAN &CAN);
   int setZero(MCP_CAN &CAN);
-  void getMotorResponse(MCP_CAN &CAN);
+  void handleMotorResponse(MCP_CAN &CAN);
 
   /**
    * @brief Sets the normal mode for the GIM8115 device.
