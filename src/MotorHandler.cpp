@@ -12,6 +12,12 @@ void MotorHandler::moveMotor(float newPos)
   normalSet(canHandler, newPos, baseVelocity, baseTorque);
 }
 
+void MotorHandler::exitMotorMode()
+{
+  // sending new position to motor library using predefined velocity and torque
+  exitMotormode(canHandler);
+}
+
 void MotorHandler::setTorqueMode(float tarTor)
 {
   // Call the private functions to build the individual packages
