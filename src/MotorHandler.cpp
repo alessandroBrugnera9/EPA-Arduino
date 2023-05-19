@@ -14,8 +14,11 @@ void MotorHandler::moveMotor(float newPos)
 
 void MotorHandler::exitMotorMode()
 {
-  // sending new position to motor library using predefined velocity and torque
   exitMotormode(canHandler);
+}
+void MotorHandler::enterMotorMode()
+{
+  setMotormode(canHandler);
 }
 
 void MotorHandler::setTorqueMode(float tarTor)
