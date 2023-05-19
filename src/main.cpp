@@ -103,13 +103,13 @@ void handleCommand(String inputString)
   case EXIT_MOTOR_CMD:
   {
     motor.exitMotorMode();
-    Serial.println("Test command received");
+    Serial.println("Exiting motor mode");
   }
   break;
   case ENTER_MOTOR_CMD:
   {
-    motor.exitMotorMode();
-    Serial.println("Test command received");
+    motor.enterMotorMode();
+    Serial.println("Entering motor mode");
   }
   break;
   case SET_MOTOR_CMD:
