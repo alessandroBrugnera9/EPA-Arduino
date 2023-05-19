@@ -30,6 +30,7 @@ const char TORQUE_MODE_CMD = 't';
 const char ZERO_CMD = 'z';
 const char TEST_CMD = 'a';
 const char EXIT_MOTOR_CMD = 'e';
+const char ENTER_MOTOR_CMD = 'o';
 const char SET_MOTOR_CMD = 'm';
 
 // Define delimiter constant
@@ -87,6 +88,12 @@ void handleCommand(String inputString)
   }
   break;
   case EXIT_MOTOR_CMD:
+  {
+    motor.exitMotorMode();
+    Serial.println("Test command received");
+  }
+  break;
+  case ENTER_MOTOR_CMD:
   {
     motor.exitMotorMode();
     Serial.println("Test command received");
