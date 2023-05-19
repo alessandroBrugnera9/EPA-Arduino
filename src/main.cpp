@@ -29,6 +29,7 @@ const char POSITION_CMD = 'p';
 const char TORQUE_MODE_CMD = 't';
 const char ZERO_CMD = 'z';
 const char TEST_CMD = 'a';
+const char EXIT_MOTOR_CMD = 'e';
 const char SET_MOTOR_CMD = 'm';
 
 // Define delimiter constant
@@ -72,8 +73,7 @@ void handleCommand(String inputString)
   break;
   case TORQUE_MODE_CMD:
   {
-    motor.normalSet(canHandler, 2, 2, 2); // Put in order: CANObject, desirePosition(rad), maxVelocity(rad/s), maxTorque(rad/s^2)
-    motor.setTorqueMode();
+    motor.setTorqueMode(2);
   }
   break;
   case ZERO_CMD:
@@ -83,6 +83,12 @@ void handleCommand(String inputString)
   break;
   case TEST_CMD:
   {
+    Serial.println("Test command received");
+  }
+  break;
+  case EXIT_MOTOR_CMD:
+  {
+    motor.exitMotorMode();
     Serial.println("Test command received");
   }
   break;
