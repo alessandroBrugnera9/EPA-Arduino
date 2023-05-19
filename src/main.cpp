@@ -74,7 +74,20 @@ void handleCommand(String inputString)
   break;
   case TORQUE_MODE_CMD:
   {
-    motor.setTorqueMode(2);
+    int delimiter = inputString.indexOf(DELIMITER);
+
+    // check if command is correct
+    if (delimiter > 0)
+    {
+      float torque = inputString.substring(delimiter + 1).toFloat(); // Get position parameter
+      Serial.print("Torque in Nm: ");
+      Serial.println(torque);
+      motor.setTorqueMode(torque);
+    }
+    else
+    {
+      Serial.println("Wrong torque command. Try t/*TORQUE*.");
+    }
   }
   break;
   case ZERO_CMD:
