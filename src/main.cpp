@@ -11,6 +11,8 @@ MCP_CAN canHandler(spiCSPin);
 // motor object instantiation
 MotorHandler motor(canHandler, 0x01, 50, 0.5);
 
+const unsigned long trackerInterval = 500;
+
 void initializeCanBus()
 {
   while (CAN_OK != canHandler.begin(MCP_ANY, CAN_1000KBPS, MCP_8MHZ))
@@ -150,6 +152,8 @@ void handleCommand(String inputString)
 }
 // ------------------------------------------------------------------------------------
 
+unsigned long lastCycleMillis;
+
 void setup()
 {
   Serial.begin(9600); // Begin Serial port to talk to computer and receive commands
@@ -162,6 +166,8 @@ void setup()
   motor.exitMotormode(canHandler);
   motor.setMotormode(canHandler);
   motor.setZero(canHandler);
+
+  lastCycleMillis = millis();
 }
 
 void loop()
@@ -172,5 +178,12 @@ void loop()
     String inputString = getStringInSerialBuffer();
     handleCommand(inputString);
   }
-  delay(100);
+
+  // motor parameters tracker
+  if ((millis() - lastCycleMillis) > trackerInterval)
+  {
+    motor.sendLastCommand();
+  }
+
+  lastCycleMillis = millis();
 }

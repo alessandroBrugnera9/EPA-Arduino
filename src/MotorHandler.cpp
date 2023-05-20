@@ -39,15 +39,6 @@ void MotorHandler::setTorqueMode(float tarTor)
   buf[7] = torPackage[1];
 
   byte sndStat = canHandler.sendMsgBuf(getId(), 0, 8, buf);
-
-  if (sndStat == CAN_OK)
-  {
-    // Serial.println("Message Sent Successfully!");
-  }
-  else
-  {
-    // Serial.println("Error Sending Message!");
-  }
 }
 
 void MotorHandler::resetPosition()
