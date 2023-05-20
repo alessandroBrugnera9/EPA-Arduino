@@ -112,6 +112,12 @@ void gim8115::handleMotorResponse(MCP_CAN &CAN)
   // Serial.write((unsigned int) pos_f);
 }
 
+void gim8115::saveLastCommand(unsigned char command[8]) {
+  for (int i = 0; i < 8; ++i) {
+    lastCommand[i] = command[i];
+}
+}
+
 float gim8115::normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor)
 {
   // Call the private functions to build the individual packages
@@ -132,6 +138,7 @@ float gim8115::normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor)
   buf[7] = torPackage[1];
 
   byte sndStat = CAN.sendMsgBuf(id, 0, 8, buf);
+  saveLastCommand(buf);
 
   if (sndStat == CAN_OK)
   {

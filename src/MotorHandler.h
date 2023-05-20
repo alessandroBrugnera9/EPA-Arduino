@@ -21,6 +21,7 @@ public:
   void setPositionFull(float newPos, float velocity, float torque); // Set normal mode function of the parent class
   void setBaseVelocity(float baseVelocity);                         // define base velocity for movemotor
   void setBaseTorque(float baseTorque);                             // define base torque for movemotor
+  void sendLastCommand();                                           // Send last command again to listen to motor parameters
 };
 
 #endif
