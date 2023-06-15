@@ -168,6 +168,7 @@ void setup()
   motor.setZero(canHandler);
 
   lastCycleMillis = millis();
+  Serial.println("Setup finished.");
 }
 
 void loop()

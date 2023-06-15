@@ -61,11 +61,6 @@ protected:
    */
   float *buildTorquePackage(float tarTor);
 
-  /**
-   * @brief Stores the last command sent to the motor. Useful to get response from the motor
-   */
-  unsigned char lastCommand[8] = {};
-
 public:
   gim8115(int _id, float _kp, float _kd)
   {
@@ -98,13 +93,7 @@ public:
     kd_16l = kd_b % 16;
     kd_16h_hex = kd_16h;
     kd_16l_hex = kd_16l;
-
-    unsigned char lastCommand[8] = {};
   }
-  
-  /// @brief updates last command array, on each normalset call
-  /// @param command the command being sent
-  void saveLastCommand(unsigned char command[8]);
 
   /**
    * @brief Get the ID of the motor in the CAN bus.
@@ -117,7 +106,6 @@ public:
   int exitMotormode(MCP_CAN &CAN);
   int setZero(MCP_CAN &CAN);
   void handleMotorResponse(MCP_CAN &CAN);
-
 
   /**
    * @brief Sets the normal mode for the GIM8115 device.

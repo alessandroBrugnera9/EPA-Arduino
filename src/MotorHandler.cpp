@@ -1,6 +1,6 @@
 #include "MotorHandler.h"
 
-MotorHandler::MotorHandler(MCP_CAN &CAN, int canId, float _kp, float _kd) : gim8115(canId, _kp, _kd), canHandler(CAN)
+MotorHandler::MotorHandler(MCP_CAN& CAN, int canId, float _kp, float _kd) : gim8115(canId, _kp, _kd), canHandler(CAN)
 {
   baseVelocity = 0;
   baseTorque = 0;
@@ -39,6 +39,16 @@ void MotorHandler::setTorqueMode(float tarTor)
   buf[7] = torPackage[1];
 
   byte sndStat = canHandler.sendMsgBuf(getId(), 0, 8, buf);
+
+  if (sndStat == CAN_OK)
+  {
+    // Serial.println("Message Sent Successfully!");
+  }
+  else
+  {
+    // Serial.println("Error Sending Message!");
+  }
+
 }
 
 void MotorHandler::resetPosition()
@@ -59,12 +69,4 @@ void MotorHandler::setBaseVelocity(float vel)
 void MotorHandler::setBaseTorque(float trq)
 {
   baseTorque = trq;
-}
-
-void MotorHandler::sendLastCommand()
-{
-  // Send the last command again
-  byte sndStat = canHandler.sendMsgBuf(getId(), 0, 8, lastCommand);
-  
-  handleMotorResponse(canHandler);
 }
