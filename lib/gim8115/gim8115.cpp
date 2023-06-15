@@ -133,16 +133,7 @@ float gim8115::normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor)
 
   byte sndStat = CAN.sendMsgBuf(id, 0, 8, buf);
 
-  if (sndStat == CAN_OK)
-  {
-    // Serial.println("Message Sent Successfully!");
-  }
-  else
-  {
-    // Serial.println("Error Sending Message!");
-  }
-
-  return 1;
+  return sndStat;
 }
 
 
