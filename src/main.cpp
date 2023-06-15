@@ -183,7 +183,8 @@ void loop()
   // motor parameters tracker
   if ((millis() - lastCycleMillis) > trackerInterval)
   {
-    motor.sendLastCommand();
+    // motor.sendLastCommand();
+    //NEED: make usage of motorHanlder listener
   }
 
   lastCycleMillis = millis();

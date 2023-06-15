@@ -9,7 +9,10 @@ private:
   MCP_CAN &canHandler;
   float baseVelocity;
   float baseTorque;
+  boolean motorModeOn;
 
+//NEED: Transform void that have response to byte
+//NEED: implement status of on or off to get position of motor
 public:
   MotorHandler(MCP_CAN &CAN, int canId, float _kp, float _kd); // Constructor - sets the motor number
   void moveMotor(float newPos);                                // Move the motor to the specified position using base velocity and torque
@@ -21,6 +24,7 @@ public:
   void setPositionFull(float newPos, float velocity, float torque); // Set normal mode function of the parent class
   void setBaseVelocity(float baseVelocity);                         // define base velocity for movemotor
   void setBaseTorque(float baseTorque);                             // define base torque for movemotor
+  
 };
 
 #endif

@@ -76,6 +76,7 @@ int gim8115::setZero(MCP_CAN &CAN)
 
 void gim8115::handleMotorResponse(MCP_CAN &CAN)
 {
+  //NEED: correct function to return value and not print them
   // Receiving data//
   unsigned char len = 0;
   long unsigned int rxId;

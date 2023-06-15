@@ -105,7 +105,7 @@ public:
   int setMotormode(MCP_CAN &CAN);
   int exitMotormode(MCP_CAN &CAN);
   int setZero(MCP_CAN &CAN);
-  void handleMotorResponse(MCP_CAN &CAN);
+  void handleMotorResponse(MCP_CAN &CAN); //NEED: correct what will retugn
 
   /**
    * @brief Sets the normal mode for the GIM8115 device.
@@ -116,5 +116,5 @@ public:
    * @param tarTor The target torque.
    * @return 1 if the message was sent successfully, 0 otherwise.
    */
-  float normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor);
+  byte normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor);
 };
