@@ -112,7 +112,7 @@ void gim8115::handleMotorResponse(MCP_CAN &CAN)
   // Serial.write((unsigned int) pos_f);
 }
 
-float gim8115::normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor)
+byte gim8115::normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor)
 {
   // Call the private functions to build the individual packages
   float *posPackage = buildPositionPackage(tarPos);
