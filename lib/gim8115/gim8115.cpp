@@ -142,8 +142,6 @@ float gim8115::normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor)
     // Serial.println("Error Sending Message!");
   }
 
-  handleMotorResponse(CAN);
-
   return 1;
 }
 
