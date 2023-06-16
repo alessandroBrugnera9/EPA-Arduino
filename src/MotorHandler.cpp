@@ -4,6 +4,7 @@ MotorHandler::MotorHandler(MCP_CAN &CAN, int canId, float _kp, float _kd) : gim8
 {
   baseVelocity = 0;
   baseTorque = 0;
+  motorModeOn = false;
 }
 
 void MotorHandler::moveMotor(float newPos)
@@ -14,11 +15,19 @@ void MotorHandler::moveMotor(float newPos)
 
 void MotorHandler::exitMotorMode()
 {
-  exitMotormode(canHandler);
+  byte sendStatus = exitMotormode(canHandler);
+  if (sendStatus == CAN_OK)
+  {
+    motorModeOn = false;
+  }
 }
 void MotorHandler::enterMotorMode()
 {
-  setMotormode(canHandler);
+  byte sendStatus = setMotormode(canHandler);
+  if (sendStatus == CAN_OK)
+  {
+    motorModeOn = true;
+  }
 }
 
 void MotorHandler::setTorqueMode(float tarTor)
@@ -29,16 +38,26 @@ void MotorHandler::setTorqueMode(float tarTor)
   //----------------------------------------------------------------------------//
   // Sending data//
   unsigned char buf[8];
-  memset(buf, 0, sizeof(buf)); //setting array to 0
+  memset(buf, 0, sizeof(buf)); // setting array to 0
   buf[6] = torPackage[0];
   buf[7] = torPackage[1];
 
   byte sndStat = canHandler.sendMsgBuf(getId(), 0, 8, buf);
 }
 
-void MotorHandler::resetPosition()
+boolean MotorHandler::resetPosition()
 {
-  setZero(canHandler);
+  byte sendStatus = setZero(canHandler);
+
+  // check if it was sent succesfully
+  if (sendStatus == CAN_OK)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 void MotorHandler::setPositionFull(float newPos, float velocity, float torque)
@@ -54,6 +73,23 @@ void MotorHandler::setBaseVelocity(float vel)
 void MotorHandler::setBaseTorque(float trq)
 {
   baseTorque = trq;
+}
+
+motorResponse MotorHandler::getMotorResponse()
+{
+  // check if motor is in motor mode or not then get response
+  if (motorModeOn)
+  {
+    enterMotorMode();
+  }
+  else
+  {
+    exitMotorMode();
+  }
+
+  motorResponse res = handleMotorResponse(canHandler);
+
+  return res;
 }
 
 void MotorHandler::printPrettyResponse(motorResponse res)

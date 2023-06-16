@@ -47,9 +47,11 @@ public:
   void setTorqueMode(float tarTor);
 
   /**
-   * Reset the motor position to zero.
+   * Resets the motor position to zero.
+   *
+   * @return True if the position reset command was sent successfully, false otherwise.
    */
-  void resetPosition();
+  boolean resetPosition();
 
   /**
    * Set the motor position, velocity, and torque using the parent class's set function.
@@ -73,6 +75,17 @@ public:
    * @param baseTorque The base torque value.
    */
   void setBaseTorque(float baseTorque);
+
+  /**
+   * Retrieves the motor response data containing position, velocity, and current values.
+   *
+   * This function checks if the motor is in motor mode or not and then retrieves the motor response data.
+   * If the motor is in motor mode, it enters the motor mode before retrieving the response.
+   * If the motor is not in motor mode, it exits the motor mode before retrieving the response.
+   *
+   * @return A motorResponse struct containing the position, velocity, and current values of the motor response.
+   */
+  motorResponse getMotorResponse();
 
   /**
    * Prints the motor response in a formatted and readable manner.
