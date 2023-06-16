@@ -75,8 +75,23 @@ void MotorHandler::setBaseTorque(float trq)
   baseTorque = trq;
 }
 
+void MotorHandler::clearCANBuffer()
+{
+  while (canHandler.checkReceive())
+  {
+    INT32U id;
+    INT8U ext;
+    INT8U len;
+    INT8U buf[MAX_CHAR_IN_MESSAGE];
+    canHandler.readMsgBuf(&id, &ext, &len, buf);
+  }
+}
+
 motorResponse MotorHandler::getMotorResponse()
 {
+  
+  clearCANBuffer();
+
   // check if motor is in motor mode or not then get response
   if (motorModeOn)
   {

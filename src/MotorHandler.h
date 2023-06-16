@@ -77,13 +77,17 @@ public:
   void setBaseTorque(float baseTorque);
 
   /**
-   * Retrieves the motor response data containing position, velocity, and current values.
+   * @brief Clears the receive buffer by reading and discarding all available messages.
+   */
+  void clearCANBuffer();
+
+  /**
+   * @brief Retrieves the motor response.
    *
-   * This function checks if the motor is in motor mode or not and then retrieves the motor response data.
-   * If the motor is in motor mode, it enters the motor mode before retrieving the response.
-   * If the motor is not in motor mode, it exits the motor mode before retrieving the response.
+   * This function clears the receive buffer, enters or exits motor mode based on the current state,
+   * handles the motor response, and returns the position, velocity, and current values.
    *
-   * @return A motorResponse struct containing the position, velocity, and current values of the motor response.
+   * @return A motorResponse struct containing the position, velocity, and current values of the last motor response.
    */
   motorResponse getMotorResponse();
 
