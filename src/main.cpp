@@ -164,7 +164,6 @@ void setup()
 
   // Preparing motor to listen to commands
   motor.exitMotormode(canHandler);
-  motor.setMotormode(canHandler);
   motor.setZero(canHandler);
 
   lastCycleMillis = millis();
