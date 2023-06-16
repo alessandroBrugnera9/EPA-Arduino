@@ -11,26 +11,75 @@ private:
   float baseTorque;
   boolean motorModeOn;
 
-  // NEED: Transform void that have response to byte
-  // NEED: implement status of on or off to get position of motor
 public:
-  MotorHandler(MCP_CAN &CAN, int canId, float _kp, float _kd); // Constructor - sets the motor number
-  void moveMotor(float newPos);                                // Move the motor to the specified position using base velocity and torque
-  // TODO: think about new name to function below to avoid misunderstading with parent class
-  void exitMotorMode();                                             // sends command to leave motor mode
-  void enterMotorMode();                                            // sends command to enter motor mode
-  void setTorqueMode(float tarTor);                                 // Set the motor to torque mode
-  void resetPosition();                                             // Reset the motor position to zero
-  void setPositionFull(float newPos, float velocity, float torque); // Set normal mode function of the parent class
-  void setBaseVelocity(float baseVelocity);                         // define base velocity for movemotor
-  void setBaseTorque(float baseTorque);                             // define base torque for movemotor
-  
+  /**
+   * Constructor for MotorHandler class.
+   *
+   * @param CAN The MCP_CAN instance used for communication.
+   * @param canId The CAN ID of the motor.
+   * @param _kp The proportional gain for position control.
+   * @param _kd The derivative gain for position control.
+   */
+  MotorHandler(MCP_CAN &CAN, int canId, float _kp, float _kd);
+
+  /**
+   * Move the motor to the specified position using base velocity and torque.
+   *
+   * @param newPos The desired position to move the motor to.
+   */
+  void moveMotor(float newPos);
+
+  /**
+   * Sends a command to exit motor mode.
+   */
+  void exitMotorMode();
+
+  /**
+   * Sends a command to enter motor mode.
+   */
+  void enterMotorMode();
+
+  /**
+   * Set the motor to torque mode.
+   *
+   * @param tarTor The target torque value for the motor.
+   */
+  void setTorqueMode(float tarTor);
+
+  /**
+   * Reset the motor position to zero.
+   */
+  void resetPosition();
+
+  /**
+   * Set the motor position, velocity, and torque using the parent class's set function.
+   *
+   * @param newPos The new position for the motor.
+   * @param velocity The velocity for the motor.
+   * @param torque The torque for the motor.
+   */
+  void setPositionFull(float newPos, float velocity, float torque);
+
+  /**
+   * Set the base velocity for the moveMotor function.
+   *
+   * @param baseVelocity The base velocity value.
+   */
+  void setBaseVelocity(float baseVelocity);
+
+  /**
+   * Set the base torque for the moveMotor function.
+   *
+   * @param baseTorque The base torque value.
+   */
+  void setBaseTorque(float baseTorque);
+
   /**
    * Prints the motor response in a formatted and readable manner.
    *
    * @param res The motorResponse struct containing the position, velocity, and current values.
    */
-  void MotorHandler::printPrettyResponse(motorResponse res); // receives a motorResponse instance and prints it a human readable way
+  void printPrettyResponse(motorResponse res);
 };
 
 #endif
