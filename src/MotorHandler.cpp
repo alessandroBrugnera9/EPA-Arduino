@@ -73,6 +73,6 @@ void MotorHandler::printPrettyResponse(motorResponse res)
   snprintf(print_vel, sizeof(print_vel), "%.3f", res.velocity);
   snprintf(print_cur, sizeof(print_cur), "%.3f", res.current);
 
-  snprintf(msgString2, sizeof(msgString2), "Motor Id: %d  Position: %s  Velocity: %s  Current: %s", res.id, print_pos, print_vel, print_cur);
+  snprintf(msgString2, sizeof(msgString2), "Position: %s  Velocity: %s  Current: %s", print_pos, print_vel, print_cur);
   Serial.println(msgString2);
 }
