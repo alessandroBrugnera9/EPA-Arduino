@@ -11,7 +11,7 @@ MCP_CAN canHandler(spiCSPin);
 // motor object instantiation
 MotorHandler motor(canHandler, 0x01, 50, 0.5);
 
-const unsigned long trackerInterval = 500;
+const unsigned long trackerInterval = 2000;
 
 void initializeCanBus()
 {
@@ -34,6 +34,7 @@ const char TEST_CMD = 'a';
 const char EXIT_MOTOR_CMD = 'e';
 const char ENTER_MOTOR_CMD = 'o';
 const char SET_MOTOR_CMD = 'm';
+const char GET_MOTOR_RESPONSE = 'g';
 
 // Define delimiter constant
 const char DELIMITER = '/';
@@ -143,6 +144,11 @@ void handleCommand(String inputString)
     }
   }
   break;
+  case GET_MOTOR_RESPONSE:
+  {
+    motor.printPrettyResponse(motor.getMotorResponse());
+  }
+  break;
   default:
   {
     Serial.println("Invalid command!"); // Print error message
@@ -152,7 +158,7 @@ void handleCommand(String inputString)
 }
 // ------------------------------------------------------------------------------------
 
-unsigned long lastCycleMillis;
+unsigned long lastOutputMillis;
 
 void setup()
 {
@@ -166,7 +172,7 @@ void setup()
   motor.exitMotormode(canHandler);
   motor.setZero(canHandler);
 
-  lastCycleMillis = millis();
+  lastOutputMillis = millis();
   Serial.println("Setup finished.");
 }
 
@@ -180,10 +186,9 @@ void loop()
   }
 
   // motor parameters tracker
-  if ((millis() - lastCycleMillis) > trackerInterval)
+  if ((millis() - lastOutputMillis) > trackerInterval)
   {
     motor.printPrettyResponse(motor.getMotorResponse());
+    lastOutputMillis = millis();
   }
-
-  lastCycleMillis = millis();
 }
