@@ -75,7 +75,6 @@ motorResponse gim8115::handleMotorResponse(MCP_CAN &CAN)
   unsigned int cur_motor = ((buf_received[4] & 0xF) << 8) | buf_received[5];  // Current reading
 
   // Converting to readable data//
-
   float pos_f = (float)pos_motor;
   pos_f = (pos_f * 191 / 65535) - 95.5;
   float vel_f = (float)vel_motor;

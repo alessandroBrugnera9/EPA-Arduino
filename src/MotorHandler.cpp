@@ -77,7 +77,7 @@ void MotorHandler::setBaseTorque(float trq)
 
 void MotorHandler::clearCANBuffer()
 {
-  while (canHandler.checkReceive()==CAN_MSGAVAIL)
+  while (canHandler.checkReceive() == CAN_MSGAVAIL)
   {
     INT32U id;
     INT8U ext;
@@ -89,7 +89,7 @@ void MotorHandler::clearCANBuffer()
 
 motorResponse MotorHandler::getMotorResponse()
 {
-  
+
   clearCANBuffer();
 
   // check if motor is in motor mode or not then get response
@@ -102,6 +102,8 @@ motorResponse MotorHandler::getMotorResponse()
     exitMotorMode();
   }
 
+  delay(1);
+
   motorResponse res = handleMotorResponse(canHandler);
 
   return res;
@@ -109,16 +111,20 @@ motorResponse MotorHandler::getMotorResponse()
 
 void MotorHandler::printPrettyResponse(motorResponse res)
 {
-  char msgString2[64];     // Array to store serial string
-  char posString[10];      // Position string
-  char velocityString[10]; // Velocity string
-  char currentString[10];  // Current string
+  char outString[64]; // Array to store serial string
+  char posString[8];  // Position string
+  char velString[8];  // Velocity string
+  char currString[8];  // Current string
 
-  // Transform to string to be printable with snprintf
-  snprintf(posString, sizeof(posString), "%.3f", res.position);
-  snprintf(velocityString, sizeof(velocityString), "%.3f", res.velocity);
-  snprintf(currentString, sizeof(currentString), "%.3f", res.current);
+  
 
-  snprintf(msgString2, sizeof(msgString2), "Position: %s  Velocity: %s  Current: %s", posString, velocityString, currentString);
-  Serial.println(msgString2);
+  dtostrf(res.position, 6, 3, posString);
+  dtostrf(res.velocity, 6, 3, velString);
+  dtostrf(res.current, 6, 3, currString);
+
+  sprintf(outString, "Position: %s  Velocity: %s  Current: %s", posString, velString, currString);
+  // Serial.println(msgString2);
+
+  // sprintf(outString, "Position: %.3f  Velocity: %.3f  Current: %.3f", res.position, res.velocity, res.current);
+  Serial.println(outString);
 }
