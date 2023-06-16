@@ -3,6 +3,13 @@
 
 #define pi = 3.14
 
+struct motorResponse
+{
+  float position;
+  float velocity;
+  float current;
+};
+
 class gim8115
 {
 private:
@@ -105,16 +112,23 @@ public:
   int setMotormode(MCP_CAN &CAN);
   int exitMotormode(MCP_CAN &CAN);
   int setZero(MCP_CAN &CAN);
-  void handleMotorResponse(MCP_CAN &CAN); //NEED: correct what will retugn
 
   /**
-   * @brief Sets the normal mode for the GIM8115 device.
+   * Reads the motor response data from the MCP_CAN bus and returns the values.
    *
-   * This function sets the position, velocity, and torque for the GIM8115 device and sends the command package.
-   * @param tarPos The target position.
-   * @param tarVel The target velocity.
-   * @param tarTor The target torque.
-   * @return 1 if the message was sent successfully, 0 otherwise.
+   * @param CAN The MCP_CAN object representing the CAN bus.
+   * @return A motorResponse struct containing the position, velocity, and current values of the last motor response.
+   */
+  motorResponse handleMotorResponse(MCP_CAN &CAN);
+
+  /**
+   * @brief Sets the motor to a normal mode with target position, velocity, and torque values.
+   *
+   * @param CAN The MCP_CAN object representing the CAN bus.
+   * @param tarPos The target position value.
+   * @param tarVel The target velocity value.
+   * @param tarTor The target torque value.
+   * @return The status of the message send operation (CAN_OK (MCP CAN lib) if successful).
    */
   byte normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor);
 };

@@ -11,8 +11,8 @@ private:
   float baseTorque;
   boolean motorModeOn;
 
-//NEED: Transform void that have response to byte
-//NEED: implement status of on or off to get position of motor
+  // NEED: Transform void that have response to byte
+  // NEED: implement status of on or off to get position of motor
 public:
   MotorHandler(MCP_CAN &CAN, int canId, float _kp, float _kd); // Constructor - sets the motor number
   void moveMotor(float newPos);                                // Move the motor to the specified position using base velocity and torque
@@ -25,6 +25,12 @@ public:
   void setBaseVelocity(float baseVelocity);                         // define base velocity for movemotor
   void setBaseTorque(float baseTorque);                             // define base torque for movemotor
   
+  /**
+   * Prints the motor response in a formatted and readable manner.
+   *
+   * @param res The motorResponse struct containing the position, velocity, and current values.
+   */
+  void MotorHandler::printPrettyResponse(motorResponse res); // receives a motorResponse instance and prints it a human readable way
 };
 
 #endif

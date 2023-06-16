@@ -1,6 +1,6 @@
 #include "MotorHandler.h"
 
-MotorHandler::MotorHandler(MCP_CAN& CAN, int canId, float _kp, float _kd) : gim8115(canId, _kp, _kd), canHandler(CAN)
+MotorHandler::MotorHandler(MCP_CAN &CAN, int canId, float _kp, float _kd) : gim8115(canId, _kp, _kd), canHandler(CAN)
 {
   baseVelocity = 0;
   baseTorque = 0;
@@ -39,7 +39,6 @@ void MotorHandler::setTorqueMode(float tarTor)
   buf[7] = torPackage[1];
 
   byte sndStat = canHandler.sendMsgBuf(getId(), 0, 8, buf);
-
 }
 
 void MotorHandler::resetPosition()
@@ -60,4 +59,20 @@ void MotorHandler::setBaseVelocity(float vel)
 void MotorHandler::setBaseTorque(float trq)
 {
   baseTorque = trq;
+}
+
+void MotorHandler::printPrettyResponse(motorResponse res)
+{
+  char msgString2[64]; // Array to store serial string
+  char print_pos[10];  // Position string
+  char print_vel[10];  // Velocity string
+  char print_cur[10];  // Current string
+
+  // Transform to string to be printable with snprintf
+  snprintf(print_pos, sizeof(print_pos), "%.3f", res.position);
+  snprintf(print_vel, sizeof(print_vel), "%.3f", res.velocity);
+  snprintf(print_cur, sizeof(print_cur), "%.3f", res.current);
+
+  snprintf(msgString2, sizeof(msgString2), "Motor Id: %d  Position: %s  Velocity: %s  Current: %s", res.id, print_pos, print_vel, print_cur);
+  Serial.println(msgString2);
 }

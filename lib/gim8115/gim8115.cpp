@@ -1,7 +1,8 @@
 #include "gim8115.h"
 #include <SPI.h> //Serial Peripherial Interface (SPI) Library
 
-unsigned char gim8115::getId() const {
+unsigned char gim8115::getId() const
+{
   return id;
 }
 
@@ -74,17 +75,13 @@ int gim8115::setZero(MCP_CAN &CAN)
   return 1;
 }
 
-void gim8115::handleMotorResponse(MCP_CAN &CAN)
+
+motorResponse gim8115::handleMotorResponse(MCP_CAN &CAN)
 {
-  //NEED: correct function to return value and not print them
-  // Receiving data//
+  //  Receiving data//
   unsigned char len = 0;
   long unsigned int rxId;
-  char msgString2[128]; // Array to store serial string
   byte buf_received[6];
-  char print_pos[15]; // Position string
-  char print_vel[15]; // Velocity string
-  char print_cur[15]; // Current string
 
   CAN.readMsgBuf(&rxId, &len, buf_received); // CAN BUS reading
 
@@ -102,16 +99,16 @@ void gim8115::handleMotorResponse(MCP_CAN &CAN)
   float cur_f = (float)cur_motor;
   cur_f = (cur_f * 36 / 4095) - 18;
 
-  // Tranform to string to be printable with sprintf
-  dtostrf(pos_f, 6, 3, print_pos);
-  dtostrf(vel_f, 6, 3, print_vel);
-  dtostrf(cur_f, 6, 3, print_cur);
+  // Create an instance of the motorResponse struct and assign the values
+  motorResponse response;
+  response.position = pos_f;
+  response.velocity = vel_f;
+  response.current = cur_f;
 
-  sprintf(msgString2, "Motor Id: %d  Position: %s  Velocity: %s  Current: %s", buf_received[0], print_pos, print_vel, print_cur);
-  Serial.println(msgString2);
-  // Serial.println("desired_Position: ");
-  // Serial.write((unsigned int) pos_f);
+  // Return the MotorResponse struct
+  return response;
 }
+
 
 byte gim8115::normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor)
 {
@@ -136,7 +133,6 @@ byte gim8115::normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor)
 
   return sndStat;
 }
-
 
 float *gim8115::buildPositionPackage(float tarPos)
 {
