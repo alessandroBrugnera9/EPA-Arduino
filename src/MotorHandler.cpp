@@ -77,7 +77,7 @@ void MotorHandler::setBaseTorque(float trq)
 
 void MotorHandler::clearCANBuffer()
 {
-  while (canHandler.checkReceive())
+  while (canHandler.checkReceive()==CAN_MSGAVAIL)
   {
     INT32U id;
     INT8U ext;
