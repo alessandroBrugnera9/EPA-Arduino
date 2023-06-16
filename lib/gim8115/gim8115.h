@@ -103,15 +103,42 @@ public:
   }
 
   /**
-   * @brief Get the ID of the motor in the CAN bus.
+   * Get the ID of the motor in the CAN bus.
    *
    * @return The ID value as an unsigned char.
    */
-  unsigned char getId() const;
+  unsigned char gim8115::getId() const;
 
-  int setMotormode(MCP_CAN &CAN);
-  int exitMotormode(MCP_CAN &CAN);
-  int setZero(MCP_CAN &CAN);
+  /**
+   * Sends a command to enter motor mode.
+   *
+   * @param CAN The MCP_CAN object representing the CAN bus.
+   * @return The status of the message send operation (CAN_OK (MCP CAN lib) if successful).
+   */
+  byte gim8115::setMotormode(MCP_CAN &CAN);
+
+  /**
+   * Sends a command to exit motor mode.
+   *
+   * @param CAN The MCP_CAN object representing the CAN bus.
+   * @return The status of the message send operation (CAN_OK (MCP CAN lib) if successful).
+   */
+  byte gim8115::exitMotormode(MCP_CAN &CAN);
+
+  /**
+   * Sends a command to set the motor position to zero.
+   *
+   * @param CAN The MCP_CAN object representing the CAN bus.
+   * @return The status of the message send operation (CAN_OK (MCP CAN lib) if successful).
+   */
+  byte gim8115::setZero(MCP_CAN &CAN);
+
+  /**
+   * Reads the motor response data from the MCP_CAN bus and returns the values.
+   *
+   * @param CAN The MCP_CAN object representing the CAN bus.
+   * @return A motorResponse struct containing the position, velocity, and current values of the last motor response.
+   */
 
   /**
    * Reads the motor response data from the MCP_CAN bus and returns the values.

@@ -6,7 +6,7 @@ unsigned char gim8115::getId() const
   return id;
 }
 
-int gim8115::setMotormode(MCP_CAN &CAN)
+byte gim8115::setMotormode(MCP_CAN &CAN)
 {
   unsigned char len = 0;
   unsigned char buf[8];
@@ -19,17 +19,12 @@ int gim8115::setMotormode(MCP_CAN &CAN)
   buf[6] = 0xFF;
   buf[7] = 0xFC;
 
-  while (CAN_OK != CAN.sendMsgBuf(id, 0, 8, buf))
-  {
-    // Serial.println("Entering Motor Mode Failed!");
-    // Serial.println("Initializing Motor again");
-    delay(100);
-  }
-  // Serial.println("Motor Mode Enabled!");
-  return 1;
+  byte sndStat = CAN.sendMsgBuf(id, 0, 8, buf);
+
+  return sndStat;
 }
 
-int gim8115::exitMotormode(MCP_CAN &CAN)
+byte gim8115::exitMotormode(MCP_CAN &CAN)
 {
   unsigned char len = 0;
   unsigned char buf[8];
@@ -42,17 +37,12 @@ int gim8115::exitMotormode(MCP_CAN &CAN)
   buf[6] = 0xFF;
   buf[7] = 0xFD;
 
-  while (CAN_OK != CAN.sendMsgBuf(id, 0, 8, buf))
-  {
-    // Serial.println("Exiting Motor Mode Failed!");
-    // Serial.println("Exiting Motor again");
-    delay(100);
-  }
-  // Serial.println("Motor Mode Disabled");
-  return 1;
+  byte sndStat = CAN.sendMsgBuf(id, 0, 8, buf);
+
+  return sndStat;
 }
 
-int gim8115::setZero(MCP_CAN &CAN)
+byte gim8115::setZero(MCP_CAN &CAN)
 {
   unsigned char len = 0;
   unsigned char buf[8];
@@ -65,16 +55,10 @@ int gim8115::setZero(MCP_CAN &CAN)
   buf[6] = 0xFF;
   buf[7] = 0xFE;
 
-  while (CAN_OK != CAN.sendMsgBuf(id, 0, 8, buf))
-  {
-    // Serial.println("Zero Setting Failed!");
-    // Serial.println("Zero Setting again");
-    delay(100);
-  }
-  // Serial.println("Zero Setted");
-  return 1;
-}
+  byte sndStat = CAN.sendMsgBuf(id, 0, 8, buf);
 
+  return sndStat;
+}
 
 motorResponse gim8115::handleMotorResponse(MCP_CAN &CAN)
 {
@@ -108,7 +92,6 @@ motorResponse gim8115::handleMotorResponse(MCP_CAN &CAN)
   // Return the MotorResponse struct
   return response;
 }
-
 
 byte gim8115::normalSet(MCP_CAN &CAN, float tarPos, float tarVel, float tarTor)
 {
