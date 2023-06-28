@@ -1,5 +1,3 @@
-#include <SPI.h>
-
 // libraries to handle motor through MCP
 #include <mcp_can.h>
 #include <MotorHandler.h>
