@@ -35,6 +35,7 @@ const char EXIT_MOTOR_CMD = 'e';
 const char ENTER_MOTOR_CMD = 'o';
 const char SET_MOTOR_CMD = 'm';
 const char GET_MOTOR_RESPONSE = 'g';
+const char BALANCE_TEST = 'b';
 
 // Define delimiter constant
 const char DELIMITER = '/';
@@ -95,7 +96,7 @@ void handleCommand(String inputString)
   break;
   case ZERO_CMD:
   {
-    motor.resetPosition();
+    motor.zeroPosition();
   }
   break;
   case TEST_CMD:
@@ -149,6 +150,28 @@ void handleCommand(String inputString)
     motor.printPrettyResponse(motor.getMotorResponse());
   }
   break;
+  case BALANCE_TEST:
+  {
+    {
+      int delimiter = inputString.indexOf(DELIMITER);
+
+      // check if command is correct
+      if (delimiter > 0)
+      {
+        float amplitude = inputString.substring(delimiter + 1).toFloat(); // Get position parameter
+        Serial.print("Amplitude in rad: ");
+        Serial.println(amplitude);
+        motor.setPositionFull(amplitude, 0.01, 0.1);
+        delay(1000);
+        motor.setPositionFull(-amplitude, 0.01, 0.1);
+      }
+      else
+      {
+        Serial.println("Wrong amplitude command. Try b/*ANGLE*.");
+      }
+    }
+  }
+  break;
   default:
   {
     Serial.println("Invalid command!"); // Print error message
@@ -169,8 +192,8 @@ void setup()
   canHandler.setMode(MCP_NORMAL); // Change to normal mode to allow messages to be transmitted and received
 
   // Preparing motor to listen to commands
-  motor.exitMotormode(canHandler);
-  motor.setZero(canHandler);
+  motor.exitMotorMode();
+  motor.zeroPosition();
 
   lastOutputMillis = millis();
   Serial.println("Setup finished.");
