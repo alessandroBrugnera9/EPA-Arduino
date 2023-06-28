@@ -6,6 +6,40 @@ unsigned char gim8115::getId() const
   return id;
 }
 
+void gim8115::setKp(float _kp)
+{
+  if (_kp > kp_max)
+  {
+    _kp = kp_max;
+  }
+  else if (_kp < kp_min)
+  {
+    _kp = kp_min;
+  }
+  unsigned int kp_b = static_cast<unsigned int>(4095 * _kp / 500);
+  float kp_16h = kp_b / 256;
+  float kp_16l = kp_b % 256;
+  kp_16h_hex = kp_16h;
+  kp_16l_hex = kp_16l;
+}
+
+void gim8115::setKd(float _kd)
+{
+  if (_kd > kd_max)
+  {
+    _kd = kd_max;
+  }
+  else if (_kd < kd_min)
+  {
+    _kd = kd_min;
+  }
+  unsigned int kd_b = static_cast<unsigned int>(4095 * _kd / 5);
+  float kd_16h = kd_b / 16;
+  float kd_16l = kd_b % 16;
+  kd_16h_hex = kd_16h;
+  kd_16l_hex = kd_16l;
+}
+
 byte gim8115::setMotormode(MCP_CAN &CAN)
 {
   unsigned char len = 0;
