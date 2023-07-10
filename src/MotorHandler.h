@@ -2,6 +2,10 @@
 #define MOTOR_HANDLER_H
 
 #include <mcp_can.h>
+#ifndef dtostrf
+  #include <DtoStrf.h>
+#endif
+
 
 struct motorResponse
 {
