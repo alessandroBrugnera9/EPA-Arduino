@@ -14,6 +14,7 @@ float *MotorHandler::buildPositionPackage(float tarPos)
   {
     tarPos = pos_min;
   }
+  // TODO: make this math better
   tarPos = tarPos + 95.5;
   pos_b = 65535 * tarPos / 191;
   posPackage[0] = pos_b / 256;
@@ -36,6 +37,7 @@ float *MotorHandler::buildVelocityPackage(float tarVel)
   {
     tarVel = vel_min;
   }
+  // TODO: make this math better
   tarVel = tarVel + 45;
   vel_b = 4095 * tarVel / 90;
   velPackage[0] = vel_b / 16;
@@ -89,6 +91,7 @@ void MotorHandler::setKp(float _kp)
   {
     _kp = kp_min;
   }
+  // TODO: make this math better
   unsigned int kp_b = static_cast<unsigned int>(4095 * _kp / 500);
   float kp_16h = kp_b / 256;
   float kp_16l = kp_b % 256;
@@ -172,12 +175,11 @@ void MotorHandler::setTorqueMode(float tarTor)
 
   //----------------------------------------------------------------------------//
   // Sending data//
-  unsigned char buf[8];
-  memset(buf, 0, sizeof(buf)); // setting array to 0
-  buf[6] = torPackage[0];
-  buf[7] = torPackage[1];
+  memset(commandBuffer, 0, 8); // setting array to 0
+  commandBuffer[6] = torPackage[0];
+  commandBuffer[7] = torPackage[1];
 
-  canHandler.sendMsgBuf(getId(), 0, 8, buf);
+  canHandler.sendMsgBuf(getId(), 0, 8, commandBuffer);
 }
 
 boolean MotorHandler::zeroPosition()
@@ -232,25 +234,28 @@ void MotorHandler::clearCANBuffer()
   }
 }
 
-motorResponse MotorHandler::getMotorResponse()
+motorResponse MotorHandler::getMotorResponse(boolean clearBuffer = false)
 {
-  clearCANBuffer();
-
-  // check if motor is in motor mode or not then get response
-  if (motorModeOn)
+  if (clearBuffer)
   {
-    enterMotorMode();
+    clearCANBuffer();
+  }
+
+  canHandler.sendMsgBuf(getId(), 0, 8, commandBuffer);
+
+  // wait for response or timeout in 5 ms
+  // NEED: check if timeout is too big
+  unsigned long startTime = millis();
+  while (canHandler.checkReceive() != CAN_MSGAVAIL && millis() - startTime < RESPONSE_TIMEOUT);
+
+  if (canHandler.checkReceive() != CAN_MSGAVAIL)
+  {
+    return EMPTY_RESPONSE;
   }
   else
   {
-    exitMotorMode();
+    return (handleMotorResponse());
   }
-
-  delay(1);
-
-  motorResponse res = handleMotorResponse();
-
-  return res;
 }
 
 void MotorHandler::printPrettyResponse(motorResponse res)
@@ -280,17 +285,17 @@ byte MotorHandler::normalSet(float tarPos, float tarVel, float tarTor)
 
   //----------------------------------------------------------------------------//
   // Sending data//
-  unsigned char buf[8];
-  buf[0] = posPackage[0];
-  buf[1] = posPackage[1];
-  buf[2] = velPackage[0];
-  buf[3] = velPackage[1] * 16 + kp_16h_hex;
-  buf[4] = kp_16l_hex;
-  buf[5] = kd_16h_hex;
-  buf[6] = kd_16l_hex * 16 + torPackage[0];
-  buf[7] = torPackage[1];
+  // TODO: make this math better
+  commandBuffer[0] = posPackage[0];
+  commandBuffer[1] = posPackage[1];
+  commandBuffer[2] = velPackage[0];
+  commandBuffer[3] = velPackage[1] * 16 + kp_16h_hex;
+  commandBuffer[4] = kp_16l_hex;
+  commandBuffer[5] = kd_16h_hex;
+  commandBuffer[6] = kd_16l_hex * 16 + torPackage[0];
+  commandBuffer[7] = torPackage[1];
 
-  byte sendStatus = canHandler.sendMsgBuf(id, 0, 8, buf);
+  byte sendStatus = canHandler.sendMsgBuf(id, 0, 8, commandBuffer);
 
   return sendStatus;
 }
@@ -310,6 +315,7 @@ motorResponse MotorHandler::handleMotorResponse()
   unsigned int cur_motor = ((buf_received[4] & 0xF) << 8) | buf_received[5];  // Current reading
 
   // Converting to readable data//
+  // TODO: make this math better
   float pos_f = (float)pos_motor;
   pos_f = (pos_f * 191 / 65535) - 95.5;
   float vel_f = (float)vel_motor;

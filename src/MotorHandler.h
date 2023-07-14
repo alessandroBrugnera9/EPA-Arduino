@@ -3,9 +3,8 @@
 
 #include <mcp_can.h>
 #ifndef dtostrf
-  #include <DtoStrf.h>
+#include <DtoStrf.h>
 #endif
-
 
 struct motorResponse
 {
@@ -45,6 +44,12 @@ private:
   float baseTorque;
   boolean motorModeOn;
 
+  // used to store the last command sent to the motor
+  unsigned char commandBuffer[8];
+
+  // used to handle the response from the motor
+  const uint32_t RESPONSE_TIMEOUT = 5;
+
 protected:
   /**
    * @brief Builds the position package for the GIM8115 device.
@@ -74,6 +79,9 @@ protected:
   float *buildTorquePackage(float tarTor);
 
 public:
+  // used to handle the response from the motor
+  motorResponse EMPTY_RESPONSE = {float(-1.0), float(-1.0), float(-1.0)};
+
   /**
    * Constructor for MotorHandler class.
    *
@@ -192,9 +200,10 @@ public:
    * This function clears the receive buffer, enters or exits motor mode based on the current state,
    * handles the motor response, and returns the position, velocity, and current values.
    *
+   * @param clearBuffer A boolean value indicating whether or not to clear the receive buffer.
    * @return A motorResponse struct containing the position, velocity, and current values of the last motor response.
    */
-  motorResponse getMotorResponse();
+  motorResponse getMotorResponse(boolean clearBuffer);
 
   /**
    * Prints the motor response in a formatted and readable manner.
